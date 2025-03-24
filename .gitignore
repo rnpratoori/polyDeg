@@ -2,3 +2,4 @@ out*
 results*
 .vscode
 *.ipynb
+mwe*
