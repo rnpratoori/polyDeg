@@ -16,11 +16,10 @@ B = 3
 epsilon_ = 1
 lambda_ = epsilon_**2
 M = 1.0
-chi = 2.0
 N1 = 1.0
 N2 = 1.0
-dt = 1.0e-07
-T = 1.0e-05 # End time
+dt = 1.0e-06
+T = 1.0e-04 # End time
 num_steps = T / dt # Number of time steps
 
 # Create mesh
@@ -109,17 +108,18 @@ ksp.setFromOptions()
 # Post-process
 # Save solution to file
 t = 0.0
-results_folder = Path("results")
-results_folder.mkdir(exist_ok=True, parents=True)
-filename = results_folder / "out_ch2p_fh.bp"
-with io.VTXWriter(domain.comm, filename, [u.sub(0)], engine="BP4") as vtx:
-    vtx.write(t)
+# results_folder = Path("results")
+# results_folder.mkdir(exist_ok=True, parents=True)
+# filename = results_folder / "out_ch2p_fh.bp"
+# with io.VTXWriter(domain.comm, filename, [u.sub(0)], engine="BP4") as vtx:
+#     vtx.write(t)
     # Time-stepping
-    c = u.sub(0)
+c = u.sub(0)
+u0.x.array[:] = u.x.array
+while t < T:
+    t += dt
+    r = solver.solve(u)
+    print(f"Step {int(t / dt)}: num iterations: {r[0]}")
     u0.x.array[:] = u.x.array
-    while t < T:
-        t += dt
-        r = solver.solve(u)
-        print(f"Step {int(t / dt)}: num iterations: {r[0]}")
-        u0.x.array[:] = u.x.array
-        vtx.write(t)
+        # if t%1e-04 < T:
+        #     vtx.write(t)
